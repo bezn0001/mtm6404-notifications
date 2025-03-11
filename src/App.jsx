@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { useState } from "react";
+import notificationsData from "./notifications";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
-  )
+// Notification component that uses the children prop
+function Notification({ children }) {
+  return <div className="notification">{children}</div>;
 }
 
-export default App
+function App() {
+  // Store notifications in state, starting with data from notifications.js
+  const [notifications, setNotifications] = useState(notificationsData);
+
+  // Function to delete a single notification by its ID
+  const handleDelete = (id) => {
+    setNotifications(notifications.filter((notif) => notif.id !== id));
+  };
+
+  // Function to clear all notifications
+  const handleClearAll = () => {
+    setNotifications([]);
+  };
+
+  return (
+    <div className="app">
+      <h1>Notification Center</h1>
+      <h2>Notifications ({notifications.length})</h2>
+
+      {notifications.length > 0 ? (
+        <>
+          {notifications.map((notif) => (
+            <Notification key={notif.id}>
+              <p><strong>{notif.name}:</strong> {notif.message}</p>
+              <button onClick={() => handleDelete(notif.id)}>Clear</button>
+            </Notification>
+          ))}
+          <button className="clear-all" onClick={handleClearAll}>Clear All</button>
+        </>
+      ) : (
+        // Show message when there are no notifications
+        <p>No notifications</p>
+      )}
+    </div>
+  );
+}
+
+export default App;
